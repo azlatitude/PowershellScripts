@@ -1,0 +1,23 @@
+$srv = "*************.com"
+$username = "*************"
+$pwd = "*************"
+$BINPATH = "E:\\inetpub\\wwwroot-ux-2\\bin"
+
+$dest = $BINPATH.Replace(':', '$').Replace('\\', '\')
+$dest = "\\$srv\$dest"
+
+echo $dest
+$srvroot = "C:\Temp\shopdeploy\binComparison\bin_teamcity"
+echo $srvroot
+net use \\$srv /user:$username $pwd
+
+
+Get-Childitem -Path "$srvroot/**/*" -Recurse | 
+    ForEach-Object {
+    $childPath = "$_".substring($srvroot.length+1)
+    $destPath = "$($dest)\$($childPath)" #this puts a \ between dest and child path
+    $ori = $_
+    echo "ori path : $ori"
+    echo "Destination path: $destPath"
+    Copy-Item -Verbose -Path $_ -Destination $destPath -Force   
+    }
